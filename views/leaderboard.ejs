@@ -1,0 +1,162 @@
+<%- include('partials/header', {currentPage: 'leaderboard', member: member}) %>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active">Leaderboard</li>
+  </ol>
+</nav>
+
+<div class="page-header-space">
+  <h1 class="page-title">Your Engagement Score</h1>
+  <p class="page-subtitle">Discover your engagement level and compete on the leaderboard</p>
+</div>
+
+<% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+  <div class="alert alert-danger">
+    <i class="fas fa-exclamation-circle"></i> <%= errorMessage %>
+  </div>
+<% } %>
+
+<% if (typeof successMessage !== 'undefined' && successMessage) { %>
+  <div class="confirmation-message">
+    <i class="fas fa-check-circle"></i> <%= successMessage %>
+  </div>
+<% } %>
+
+<% if (typeof missingId !== 'undefined' && missingId) { %>
+  <div class="alert alert-warning">
+    <i class="fas fa-exclamation-triangle"></i> <strong>Notice:</strong> Your account doesn't have a Salesforce ID assigned.
+    <% if (useSalesforce) { %>
+      To participate in the leaderboard, you must register with Salesforce mode activated.
+    <% } else { %>
+      Salesforce mode is disabled. You are in demo mode.
+    <% } %>
+  </div>
+<% } %>
+
+<div class="leaderboard-container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="score-display">
+        <div class="score-circle">
+          <div class="score-value"><%= Math.round(scorePreview.score) %></div>
+          <div class="score-label">POINTS</div>
+        </div>
+        <div class="engagement-level"><%= scorePreview.level %></div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="score-details">
+        <% const details = scorePreview.details; %>
+        
+        <!-- Achievements -->
+        <div class="score-category">
+          <div class="score-category-label">
+            <span class="score-category-name">Unlocked achievements</span>
+            <span class="score-category-value"><%= details.achievements.value %>/<%= details.achievements.maxValue %> (<%=  Math.round(details.achievements.percentage) %>%)</span>
+          </div>
+          <div class="score-progress-bar">
+            <div class="score-progress-fill progress-achievements" data-width="<%= details.achievements.percentage %>"></div>
+          </div>
+        </div>
+        
+        <!-- Level points -->
+        <div class="score-category">
+          <div class="score-category-label">
+            <span class="score-category-name">Level points</span>
+            <span class="score-category-value"><%= details.levelPoints.value %> (<%= Math.round(details.levelPoints.percentage) %>%)</span>
+          </div>
+          <div class="score-progress-bar">
+            <div class="score-progress-fill progress-levelPoints" data-width="<%= details.levelPoints.percentage %>"></div>
+          </div>
+        </div>
+        
+        <!-- Reward points -->
+        <div class="score-category">
+          <div class="score-category-label">
+            <span class="score-category-name">Reward points</span>
+            <span class="score-category-value"><%= details.rewardPoints.value %> (<%= Math.round(details.rewardPoints.percentage) %>%)</span>
+          </div>
+          <div class="score-progress-bar">
+            <div class="score-progress-fill progress-rewardPoints" data-width="<%= details.rewardPoints.percentage %>"></div>
+          </div>
+        </div>
+        
+        <!-- Level -->
+        <div class="score-category">
+          <div class="score-category-label">
+            <span class="score-category-name">Current level</span>
+            <span class="score-category-value"><%= details.tier.value %> (<%= Math.round(details.tier.percentage) %>%)</span>
+          </div>
+          <div class="score-progress-bar">
+            <div class="score-progress-fill progress-tier" data-width="<%= details.tier.percentage %>"></div>
+          </div>
+        </div>
+        
+        <!-- Remaining balance -->
+        <div class="score-category">
+          <div class="score-category-label">
+            <span class="score-category-name">Available balance</span>
+            <span class="score-category-value">$<%= details.balance.value.toFixed(2) %> (<%= Math.round(details.balance.percentage) %>%)</span>
+          </div>
+          <div class="score-progress-bar">
+            <div class="score-progress-fill progress-balance" data-width="<%= details.balance.percentage %>"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <% if (!hasSubmitted) { %>
+    <form method="POST" action="/leaderboard/submit" id="leaderboardForm">
+      <button type="submit" class="submit-button" <%= (missingId && useSalesforce) ? 'disabled' : '' %>>
+        <i class="fas fa-trophy"></i> Submit to Leaderboard
+      </button>
+      <% if (missingId && useSalesforce) { %>
+        <p class="text-center text-muted mt-2">
+          You cannot submit your score without a Salesforce ID.
+        </p>
+      <% } %>
+    </form>
+  <% } else { %>
+    <div class="text-center mt-4">
+      <p class="text-success">
+        <i class="fas fa-check-circle"></i> 
+        You have already submitted your score to the leaderboard 
+        (<%= new Date(member.leaderboardSubmittedAt).toLocaleString() %>)
+      </p>
+    </div>
+  <% } %>
+</div>
+
+<div class="leaderboard-explanation">
+  <h4>How is your Engagement Score calculated?</h4>
+  <p>Your score is based on your activity and interaction with our platform:</p>
+  
+  <ul>
+    <li><strong>Unlocked achievements (40%):</strong> The more achievements you earn, the higher your score.</li>
+    <li><strong>Level points (25%):</strong> The level points you have accumulated.</li>
+    <li><strong>Reward points (15%):</strong> Points available to redeem for rewards.</li>
+    <li><strong>Level achieved (15%):</strong> Your current level (Bronze, Silver, Gold or Platinum).</li>
+    <li><strong>Available balance (5%):</strong> A bonus for maintaining a good balance.</li>
+  </ul>
+  
+  <p class="mb-0">Your score will update automatically as you interact with the platform. Keep participating to improve your position on the leaderboard!</p>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Configure all elements with data-width (progress bars)
+    const progressBars = document.querySelectorAll('[data-width]');
+    progressBars.forEach(bar => {
+      const width = bar.getAttribute('data-width');
+      if (width) {
+        bar.style.width = width + '%';
+      }
+    });
+  });
+</script>
+
+<%- include('partials/footer') %>

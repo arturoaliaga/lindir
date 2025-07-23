@@ -1,0 +1,491 @@
+<%- include('partials/header', {currentPage: 'register'}) %>
+
+<style>
+  .register-hero {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    color: white;
+    padding: 60px 0;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .register-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/img/background.png') center/cover;
+    opacity: 0.1;
+    z-index: 1;
+  }
+  
+  .register-hero-content {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    color: white !important;
+    z-index: 10;
+    position: relative;
+  }
+  
+  .hero-subtitle {
+    font-size: 24px;
+    font-weight: 400;
+    color: white !important;
+    opacity: 0.95;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    z-index: 10;
+    position: relative;
+  }
+  
+  .register-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+  
+  .benefits-side {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #f5eeee 100%);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 600px;
+    position: relative;
+  }
+  
+  .benefits-side::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 80px;
+    height: 80px;
+    background: rgba(227, 6, 19, 0.1);
+    border-radius: 50%;
+    z-index: 1;
+  }
+  
+  .form-side {
+    padding: 40px;
+    position: relative;
+    z-index: 5;
+  }
+  
+  .benefits-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    text-align: center;
+    position: relative;
+    z-index: 5;
+  }
+  
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    animation: slideInLeft 0.6s ease-out;
+    position: relative;
+    z-index: 5;
+    padding: 10px 0;
+  }
+  
+  .benefit-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  .benefit-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    font-weight: 500;
+    position: relative;
+    z-index: 5;
+    padding-top: 2px;
+  }
+  
+  .welcome-bonus {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    margin-top: 30px;
+    box-shadow: 0 10px 20px rgba(227, 6, 19, 0.3);
+    position: relative;
+    z-index: 5;
+  }
+  
+  .bonus-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: white !important;
+  }
+  
+  .bonus-amount {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: white !important;
+  }
+  
+  .bonus-description {
+    font-size: 14px;
+    opacity: 0.9;
+    color: white !important;
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 5;
+  }
+  
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-color);
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    position: relative;
+    z-index: 5;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.1);
+  }
+  
+  .interests-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 5;
+  }
+  
+  .interests-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--text-color);
+  }
+  
+  .form-check {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 5;
+    padding: 5px 0;
+  }
+  
+  .form-check-input {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+    position: relative;
+    z-index: 10;
+  }
+  
+  .form-check-label {
+    font-size: 15px;
+    color: #555;
+    cursor: pointer;
+    position: relative;
+    z-index: 5;
+  }
+  
+  .register-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(227, 6, 19, 0.3);
+    position: relative;
+    z-index: 5;
+  }
+  
+  .register-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(227, 6, 19, 0.4);
+  }
+  
+  .demo-notice {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-left: 4px solid #2196f3;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 25px;
+    text-align: center;
+    position: relative;
+    z-index: 5;
+  }
+  
+  .demo-notice-icon {
+    font-size: 24px;
+    color: #2196f3;
+    margin-bottom: 10px;
+  }
+  
+  .demo-notice-text {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .alert {
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 5;
+  }
+  
+  .alert-info {
+    background: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    color: #1976d2;
+  }
+  
+  .alert-danger {
+    background: #ffebee;
+    border-left: 4px solid #f44336;
+    color: #c62828;
+  }
+  
+  /* Asegurar que no hay overlapping */
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .row {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+  }
+  
+  .no-gutters > [class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .form-side {
+    animation: fadeInUp 0.8s ease-out;
+  }
+  
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 36px;
+    }
+    
+    .hero-subtitle {
+      font-size: 20px;
+    }
+    
+    .benefits-side {
+      min-height: auto;
+      padding: 30px 20px;
+    }
+    
+    .form-side {
+      padding: 30px 20px;
+    }
+    
+    .no-gutters > [class*="col-"] {
+      margin-bottom: 0;
+    }
+  }
+</style>
+
+<!-- Hero Section -->
+<div class="register-hero">
+  <div class="container">
+    <div class="register-hero-content text-center">
+      <h1 class="hero-title">Únete a <%= brand.fullName %></h1>
+      <p class="hero-subtitle">Tu compañía de seguros de confianza</p>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="register-container">
+    <div class="row no-gutters">
+      <!-- Lado de beneficios -->
+      <div class="col-lg-5">
+        <div class="benefits-side">
+          <h3 class="benefits-title">BENEFICIOS EXCLUSIVOS</h3>
+          
+          <% brand.messages.benefits.list.forEach((benefit, index) => { %>
+            <div class="benefit-item" style="animation-delay: <%= index * 0.1 %>s;">
+              <div class="benefit-icon">
+                <i class="fas fa-check" style="color: white; font-size: 14px;"></i>
+              </div>
+              <div class="benefit-text"><%= benefit %></div>
+            </div>
+          <% }); %>
+          
+          <div class="welcome-bonus">
+            <div class="bonus-title">REGALO DE BIENVENIDA</div>
+            <div class="bonus-amount">300 €</div>
+            <div class="bonus-description">Para contratar tus primeros seguros</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Lado del formulario -->
+      <div class="col-lg-7">
+        <div class="form-side">
+          <% if (typeof message !== 'undefined' && message) { %>
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle"></i> <%= message %>
+            </div>
+          <% } %>
+          
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger">
+              <i class="fas fa-exclamation-triangle"></i> <%= error %>
+            </div>
+          <% } %>
+          
+          <form method="POST" action="/register">
+            <div class="form-group">
+              <label for="name" class="form-label">Nombre Completo</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="name" 
+                name="name" 
+                required
+                placeholder="Ej: María García López"
+                value="<%= typeof formData !== 'undefined' ? formData.name : '' %>"
+              >
+            </div>
+            
+            <div class="form-group">
+              <label for="email" class="form-label">Correo Electrónico</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                name="email" 
+                required
+                placeholder="Ej: maria.garcia@email.com"
+                value="<%= typeof formData !== 'undefined' ? formData.email : '' %>"
+              >
+              <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">
+                Cada email solo puede registrarse una vez. Si ya tienes cuenta, utiliza un email diferente para probar la demo.
+              </small>
+            </div>
+            
+            <div class="interests-section">
+              <div class="interests-title">¿Qué seguros te interesan?</div>
+              <% brand.categories.forEach(category => { %>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="preferences" value="<%= category.id %>" id="<%= category.id %>">
+                  <label class="form-check-label" for="<%= category.id %>">
+                    <%= category.label %>
+                  </label>
+                </div>
+              <% }); %>
+            </div>
+            
+            <button type="submit" class="register-btn">
+              <i class="fas fa-shield-alt"></i> <%= brand.messages.joinClub %>
+            </button>
+          </form>
+          
+          <div class="demo-notice">
+            <div class="demo-notice-icon">
+              <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="demo-notice-text">
+              <strong>Esta es una demostración.</strong><br>
+              Los datos se almacenan temporalmente y se borrarán tras la finalización de la demo.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
